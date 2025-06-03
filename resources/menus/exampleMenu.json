@@ -1,0 +1,64 @@
+{
+    "menus": [
+        {
+            "name": "Home",
+            "route": "dashboard",
+            "icon": "icon-[tabler--layout-dashboard]"
+        },
+        {
+            "name": "Apps",
+            "icon": "icon-[tabler--apps]",
+            "submenus": [
+                { "name": "Chat", "icon": "icon-[tabler--message]" },
+                { "name": "Calendar", "icon": "icon-[tabler--calendar]" },
+                {
+                    "name": "Academy",
+                    "icon": "icon-[tabler--book]",
+                    "submenus": [
+                        { "name": "Courses", "icon": "icon-[tabler--books]" },
+                        {
+                            "name": "Course Details",
+                            "icon": "icon-[tabler--list-details]"
+                        },
+                        {
+                            "name": "Stats",
+                            "icon": "icon-[tabler--chart-bar]",
+                            "submenus": [
+                                {
+                                    "name": "Goals",
+                                    "icon": "icon-[tabler--chart-donut]"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Settings",
+            "icon": "icon-[tabler--settings]"
+        },
+        {
+            "menuHeader": "Account"
+        },
+        {
+            "name": "Sign in",
+            "icon": "icon-[tabler--login]"
+        },
+        {
+            "name": "Sign out",
+            "icon": "icon-[tabler--logout-2]"
+        },
+        {
+            "menuHeader": "Miscellaneous"
+        },
+        {
+            "name": "Support",
+            "icon": "icon-[tabler--users-group]"
+        },
+        {
+            "name": "Documentation",
+            "icon": "icon-[tabler--files]"
+        }
+    ]
+}

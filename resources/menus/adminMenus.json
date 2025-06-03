@@ -1,0 +1,24 @@
+{
+    "menus": [
+        {
+            "name": "Colleges",
+            "route": "admin.colleges",
+            "icon": "icon-[tabler--school]"
+        },
+        {
+            "name": "Questionnaires",
+            "route": "admin.questionnaires",
+            "icon": "icon-[tabler--clipboard-list]"
+        },
+        {
+            "name": "KNN",
+            "route": "admin.knn",
+            "icon": "icon-[tabler--chart-scatter]"
+        },
+        {
+            "name": "Privacy",
+            "route": "admin.privacy",
+            "icon": "icon-[tabler--shield-check]"
+        }
+    ]
+}

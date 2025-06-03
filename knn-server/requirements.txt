@@ -1,0 +1,10 @@
+flask
+flask-sqlalchemy
+environs
+mysqlclient
+
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
