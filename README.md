@@ -1,66 +1,135 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Course Recommendation System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Hey there! This is my pet project where I'm trying to use machine learning to help students figure out what courses they should take based on their assessment results. Fair warning though - I'm still learning as I go, so don't expect this to be production-ready. There are probably bugs lurking around, but hey, that's part of the fun!
 
-## About Laravel
+I built the main server with Laravel 11, Livewire, and AlpineJS. For the ML magic, I'm using Python with Scikit-Learn for the actual machine learning stuff, plus Matplotlib and Seaborn to make pretty graphs. Flask handles the backend communication between everything.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## What You'll Need
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.1 or newer
+- MySQL or MariaDB (either works fine)
+- Python 3.13
+- A bunch of data files:
+  - `colleges.json` - Check out the [example format](#collegesjson) below
+  - `raw-datasets/<college>/<program>.csv` - These are just exported CSV files from Google Forms
+  - `questionnaires/<college>/<program>.json` - Raw Google Form data (you can grab these with a custom Apps Script)
+  - `public/assets/college/*.png` - College logo images (make 'em look nice!)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Getting Started
 
-## Learning Laravel
+First things first - let's get all the dependencies sorted out:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```sh
+composer install
+npm install
+python3 -m venv knn-server/.venv
+./knn-server/.venv/bin/pip install -r knn-server/requirements.txt 
+# Windows folks, use this instead: knn-server\.venv\Scripts\pip install -r knn-server\requirements.txt 
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Setting Up for the First Time
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Run these commands to get everything initialized:
 
-## Laravel Sponsors
+```sh
+php artisan key:generate
+php artisan migrate:fresh
+php artisan optimize:clear
+php artisan storage:link
+php artisan app:update-all-db
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Running in Development Mode
 
-### Premium Partners
+Want to run everything at once? Just use:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```sh
+composer dev
+```
+This fires up both the main server and the Python KNN server together. Pretty neat, right?
 
-## Contributing
+### Running for Production (Way Faster!)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+If you want better performance, build everything first and then run the servers separately:
 
-## Code of Conduct
+```sh
+npm run build
+# Open two terminals and run these in each one:
+php artisan serve
+php artisan knn:start
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Once everything's running, just hop over to your browser, create your first account, and you're all set!
 
-## Security Vulnerabilities
+## File Formats (The Boring but Important Stuff)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### `colleges.json`
 
-## License
+This file tells the system about all your colleges and programs:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```json
+[
+    {
+        "name": "CBA",
+        "long_name": "College of Business and Accountacy",
+        "image_url": "assets/colleges/CBA.jpg",
+        "description": "This college equips their students with knowledge related to business management, finance, and entrepreneurship. It helps foster leadership and analytical skills of their students for success in the corporate world.",
+        "board_programs": [
+            { "name": "BSA", "long_name": "Bachelor of Science in Accountancy" },
+            // ... add more programs here
+        ]
+    },
+    // ... add more colleges here
+]
+```
+
+### `raw-datasets/<college>/<program>.csv`
+
+These are your Google Form responses exported as CSV files. They should look something like this:
+
+```csv
+"Timestamp","Total score","Question 1","Question 1 [Score]","Question 1 [Feedback]",...
+"2024/12/22 11:49:31 AM GMT+8","8.00 / 10","Choice 3","1.00 / 1","",...
+...
+```
+
+### `questionnaires/<college>/<program>.json`
+
+This is the raw form structure from Google Forms:
+
+```json
+{
+  "metadata": {
+    // ... form metadata stuff
+  },
+  "items": [
+    {
+      "type": "MULTIPLE_CHOICE",
+      "title": "Question",
+      "id": 11111,
+      "index": 0,
+      "helpText": "",
+      "isRequired": true,
+      "choices": [
+        {
+          "value": "Choice 1",
+          "isCorrect": false
+        },
+        {
+          "value": "Choice 2",
+          "isCorrect": false
+        },
+        {
+          "value": "Choice 3",
+          "isCorrect": false
+        },
+        {
+          "value": "Choice 4",
+          "isCorrect": true
+        }
+      ]
+    },
+    // ... more questions here
+  ]
+}
+```
